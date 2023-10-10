@@ -1,0 +1,34 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 50px;
+  margin: 0;
+  text-align: center;
+}
+
+.flexHeader {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+a {
+  color: #00B7FF;
+}
+
+
+.column-container {
+  display: flex;
+  /* Uses Flexbox to create a horizontal layout of child elements */
+}
+
+.column {
+  flex: 1;
+  /* Each column takes equal width */
+  padding: 10px;
+  /* Adds some space around the content inside each column */
+  border: 1px solid #ccc;
+  /* Optional: Adds a border around each column */
+  box-sizing: border-box;
+  /* Makes sure padding and border are included in the width */
+}
