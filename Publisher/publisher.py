@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import random
 import time
 
 from azure.iot.device.aio import IoTHubDeviceClient
@@ -18,6 +19,7 @@ async def main():
     device_client = IoTHubDeviceClient.create_from_connection_string(
         os.getenv("CONNECTION_STRING")
     )
+    payload_mean = random.random() * 100
 
     # Connect to the IoT Hub
     await device_client.connect()
@@ -32,6 +34,7 @@ async def main():
         msg = json.dumps(
             {
                 "ts": time.time(),
+                "payload": payload_mean + random.random(),
             }
         )
         await device_client.send_message(msg)
