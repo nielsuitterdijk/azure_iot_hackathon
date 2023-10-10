@@ -42,8 +42,8 @@ $(document).ready(() => {
   };
   const updateSessionLatency = debounce(() => {
     data[0].value = latencies.reduce((a, b) => a + b, 0) / latencies.length;
-    console.log(data[0].value);
     Plotly.react("sessionLatency", data, layout);
+    latencies = [];
   });
   webSocket.onmessage = function onMessage(message) {
     try {

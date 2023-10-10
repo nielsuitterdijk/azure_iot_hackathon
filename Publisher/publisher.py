@@ -29,8 +29,11 @@ async def main():
         elapsed_time = current_time - start_time
 
         # Send message
-        print(f"Sending message {i}")
-        msg = json.dumps({"ts": time.time()})
+        msg = json.dumps(
+            {
+                "ts": time.time(),
+            }
+        )
         await device_client.send_message(msg)
 
         # Sleep
