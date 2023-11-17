@@ -3,6 +3,7 @@ import json
 import os
 import random
 import time
+from datetime import datetime
 
 from azure.iot.device.aio import IoTHubDeviceClient
 from dotenv import load_dotenv
@@ -10,14 +11,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-messages_per_second = 100
-total_duration_in_seconds = 1
+messages_per_second = 1  # Doing more than 10Hz is challenging without batching
+total_duration_in_seconds = 3600
 
 
 async def main():
     # Create instance of the device client using the authentication provider
     device_client = IoTHubDeviceClient.create_from_connection_string(
-        os.getenv("CONNECTION_STRING")
+        os.getenv("DEVICE_CONNECTION_STRING")
     )
     payload_mean = random.random() * 100
 
@@ -26,7 +27,7 @@ async def main():
     start_time = time.time()
 
     # Loop through total messages
-    for i in range(messages_per_second * total_duration_in_seconds):
+    for i in range(int(messages_per_second * total_duration_in_seconds)):
         current_time = time.time()
         elapsed_time = current_time - start_time
 
@@ -37,6 +38,7 @@ async def main():
                 "payload": payload_mean + random.random(),
             }
         )
+        print("[%s] Send message" % datetime.now().strftime("%H:%M:%S"))
         await device_client.send_message(msg)
 
         # Sleep

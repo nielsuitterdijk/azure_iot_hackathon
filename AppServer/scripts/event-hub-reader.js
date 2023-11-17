@@ -2,8 +2,13 @@
  * Microsoft Sample Code - Copyright (c) 2020 - Licensed MIT
  */
 
-const { EventHubProducerClient, EventHubConsumerClient } = require('@azure/event-hubs');
-const { convertIotHubToEventHubsConnectionString } = require('./iot-hub-connection-string.js');
+const {
+  EventHubProducerClient,
+  EventHubConsumerClient,
+} = require("@azure/event-hubs");
+const {
+  convertIotHubToEventHubsConnectionString,
+} = require("./iot-hub-connection-string.js");
 
 class EventHubReader {
   constructor(iotHubConnectionString, consumerGroup) {
@@ -13,25 +18,41 @@ class EventHubReader {
 
   async startReadMessage(startReadMessageCallback) {
     try {
-      const eventHubConnectionString = await convertIotHubToEventHubsConnectionString(this.iotHubConnectionString);
-      const consumerClient = new EventHubConsumerClient(this.consumerGroup, eventHubConnectionString);
-      console.log('Successfully created the EventHubConsumerClient from IoT Hub event hub-compatible connection string.');
+      var eventHubConnectionString;
+      if (this.iotHubConnectionString.includes("servicebus.windows.net")) {
+        eventHubConnectionString = this.iotHubConnectionString;
+      } else {
+        eventHubConnectionString =
+          await convertIotHubToEventHubsConnectionString(
+            this.iotHubConnectionString
+          );
+      }
+      const consumerClient = new EventHubConsumerClient(
+        this.consumerGroup,
+        eventHubConnectionString
+      );
+      console.log(
+        "Successfully created the EventHubConsumerClient from IoT Hub event hub-compatible connection string."
+      );
 
       const partitionIds = await consumerClient.getPartitionIds();
-      console.log('The partition ids are: ', partitionIds);
+      console.log("The partition ids are: ", partitionIds);
 
       consumerClient.subscribe({
         processEvents: (events, context) => {
           for (let i = 0; i < events.length; ++i) {
             startReadMessageCallback(
               events[i].body,
-              events[i].enqueuedTimeUtc,
-              events[i].systemProperties["iothub-connection-device-id"]);
+              new Date(),
+              "device_01"
+              // events[i].enqueuedTimeUtc
+              // events[i].systemProperties["iothub-connection-device-id"]
+            );
           }
         },
         processError: (err, context) => {
           console.error(err.message || err);
-        }
+        },
       });
     } catch (ex) {
       console.error(ex.message || ex);

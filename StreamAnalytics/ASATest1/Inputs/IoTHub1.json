@@ -1,0 +1,20 @@
+{
+  "Name": "IoTHub1",
+  "Type": "Data Stream",
+  "DataSourceType": "IoT Hub",
+  "IoTHubProperties": {
+    "IotHubNamespace": "cctest2",
+    "Endpoint": "messages/events",
+    "SharedAccessPolicyName": "iothubowner",
+    "SharedAccessPolicyKey": "HostName=cctest2.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=4EXuafxACqTvg0YPb5VadJw3Wsmh2fPRyAIoTPsKsqU=",
+    "ConsumerGroupName": "app_service"
+  },
+  "DataSourceCredentialDomain": null,
+  "Serialization": {
+    "Type": "Json",
+    "Encoding": "UTF8"
+  },
+  "PartitionKey": null,
+  "CompressionType": "None",
+  "ScriptType": "Input"
+}

@@ -17,7 +17,6 @@ $(document).ready(() => {
     ? "wss://"
     : "ws://";
   const webSocket = new WebSocket(protocol + location.host);
-  const latencies = [];
 
   // When a web socket message arrives:
   webSocket.onopen = () => {
@@ -40,13 +39,9 @@ $(document).ready(() => {
       setTimeout(initializeWebSocket, 5000 * retryCount); // increasing delay
     }
   };
-  const updateSessionLatency = debounce(() => {
-    data[0].value = latencies.reduce((a, b) => a + b, 0) / latencies.length;
-    Plotly.react("sessionLatency", data, layout);
-    latencies = [];
-  });
   webSocket.onmessage = function onMessage(message) {
     try {
+      console.log("Updating");
       const messageData = JSON.parse(message.data);
 
       // time and either temperature or humidity are required
@@ -56,19 +51,19 @@ $(document).ready(() => {
 
       // Update live latency
       const latency = new Date() - messageData.IotData.ts * 1000;
-      data[0].value = latency;
-      Plotly.react("liveLatency", data, layout);
+      latencyData[0].value = latency;
+      Plotly.react("liveLatency", latencyData, layout);
 
       // Update session latency
-      latencies.push(latency);
-      updateSessionLatency();
+      countData[0].value = messageData.IotData.count;
+      Plotly.react("liveCount", countData, layout);
     } catch (err) {
       console.error(err);
     }
   };
 
   // Gauge
-  var data = [
+  var latencyData = [
     {
       domain: { x: [0, 1], y: [0, 1] },
       value: 50,
@@ -80,7 +75,19 @@ $(document).ready(() => {
       },
     },
   ];
+  var countData = [
+    {
+      domain: { x: [0, 1], y: [0, 1] },
+      value: 50,
+      title: { text: "Count" },
+      type: "indicator",
+      mode: "gauge+number",
+      gauge: {
+        axis: { range: [0, 200] },
+      },
+    },
+  ];
   const layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
-  Plotly.newPlot("liveLatency", data, layout);
-  Plotly.newPlot("sessionLatency", data, layout);
+  Plotly.newPlot("liveLatency", latencyData, layout);
+  Plotly.newPlot("liveCount", countData, layout);
 });

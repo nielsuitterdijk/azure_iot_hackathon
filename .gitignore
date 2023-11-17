@@ -1,1 +1,7 @@
-**/node_modules/**
+terraform/.terraform/**
+AppServer/node_modules/**
+.mypy_cache/**
+FunctionAnalytics/.python_package/**
+**.DS_Store
+**.pyc
+.venv/**
